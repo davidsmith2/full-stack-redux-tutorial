@@ -58,7 +58,7 @@ describe('Voting', () => {
 		);
 		const buttons = scryRenderedDOMComponentsWithTag(component, 'button');
 		expect(buttons.length).to.equal(0);
-		const winner = ReactDOM.findDOMNode(component.refs.winner);
+		const winner = ReactDOM.findDOMNode(component.refs.votingWinner);
 		expect(winner).to.be.ok;
 		expect(winner.textContent).to.contain('Trainspotting');
 	});
