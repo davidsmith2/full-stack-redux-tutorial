@@ -18,13 +18,14 @@ function getWinners(vote) {
  * Updates list of current entries
  */
 export function setEntries(state, entries) {
-	return state.set('entries', List(entries));
+	const list = List(entries);
+	return state.set('entries', list).set('initialEntries', list);
 }
 
 /**
  * If there's a winner declares a winner otherwise sets up the next vote
  */
-export function next(state) {
+export function next(state, round = state.getIn(['vote', 'round'], 0)) {
 	const entries = state.get('entries').concat(getWinners(state.get('vote')));
 	if (entries.size === 1) {
 		return state.delete('vote')
@@ -33,7 +34,10 @@ export function next(state) {
 
 	} else {
 		return state.merge({
-			vote: Map({pair: entries.take(2)}),
+			vote: Map({
+				round: round + 1,
+				pair: entries.take(2)
+			}),
 			entries: entries.skip(2)
 		});
 	}
@@ -48,6 +52,17 @@ export function vote(voteState, entry) {
 		0,
 		tally => tally + 1
 	);
+}
+
+export function restart(state) {
+	const round = state.getIn(['vote', 'round'], 0);
+	return next(
+		state.set('entries', state.get('initialEntries'))
+			.remove('vote')
+			.remove('winner'), 
+		round
+	);
+
 }
 
 /**

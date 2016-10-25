@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {
 	renderIntoDocument,
 	scryRenderedDOMComponentsWithClass,
+	scryRenderedDOMComponentsWithTag,
 	Simulate
 } from 'react-addons-test-utils';
 import {List, Map} from 'immutable';
@@ -20,16 +21,14 @@ describe('Results', () => {
 		);
 		const entries = scryRenderedDOMComponentsWithClass(component, 'entry');
 		const [train, days] = entries.map(e => e.textContent);
-
 		expect(entries.length).to.equal(2);
 		expect(train).to.contain('Trainspotting');
 		expect(train).to.contain('5');
 		expect(days).to.contain('28 Days Later');
 		expect(days).to.contain('0');
-
 	});
 
-	it('invokes the next callback when the button is clicked', () => {
+	it('invokes action callback when next button is clicked', () => {
 		let nextInvoked = false;
 		const next = () => nextInvoked = true;
 		const pair = List.of('Trainspotting', '28 Days Later');
@@ -47,6 +46,16 @@ describe('Results', () => {
 		const winner = ReactDOM.findDOMNode(component.refs.resultsWinner);
 		expect(winner).to.be.ok;
 		expect(winner.textContent).to.contain('Trainspotting');
+	});
+
+	it('invokes action callback when restart button is clicked', () => {
+		let restartInvoked = false;
+		const pair = List.of('Trainspotting', '28 Days Later');
+		const component = renderIntoDocument(
+			<Results pair={pair} tally={Map()} restart={() => restartInvoked = true} />
+		);
+		Simulate.click(ReactDOM.findDOMNode(component.refs.restart));
+		expect(restartInvoked).to.equal(true);
 	});
 
 });

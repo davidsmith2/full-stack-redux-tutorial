@@ -23,12 +23,19 @@ function vote(state, entry) {
 	}
 }
 
+function restart(state) {
+	console.log('restarting');
+	return state;
+}
+
 export default function(state = Map(), action) {
 	switch(action.type) {
 	case 'SET_STATE':
 		return resetVote(setState(state, action.state));
 	case 'VOTE':
 		return vote(state, action.entry);
+	case 'RESTART':
+		return restart(state);
 	}
 	return state;
 }
